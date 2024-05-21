@@ -1,0 +1,256 @@
+openapi: 3.0.0
+info:
+  title: AsheerSupport
+  description: >-
+    The Asher Support API is a backend system designed to provide support
+    functionality for the Asher application. It allows users to manage tasks,
+    register and authenticate users, and retrieve support information. The API
+    is built using Node.js, Express, and Prisma, and it communicates with a
+    PostgreSQL database to store and retrieve data.
+
+
+    The {{host}} is currently
+    [https://sunny-empathy-production.up.railway.app](https://sunny-empathy-production.up.railway.app)
+  version: 1.0.0
+servers:
+  - url: http://{{host}}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Task
+  - name: User
+  - name: Memebrs
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Asher Barnie
+                email: barnermine@asher.com
+                password: secretPass
+                role: manager
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: famin@asher.com
+                password: secretPass
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/task:
+    get:
+      tags:
+        - Task
+      summary: Get All Tasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+          example: desc
+        - name: filterBy
+          in: query
+          schema:
+            type: string
+          example: inProgress
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/task/{taskId}:
+    get:
+      tags:
+        - Task
+      summary: Get Single Task
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Task
+      summary: Delete Task
+      parameters:
+        - name: taskId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/task/:
+    post:
+      tags:
+        - Task
+      summary: Create Task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                task_name: Test  4
+                task_description: This is ask for user 43.
+                assign_to_id: 1
+                status: inProgress
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Task
+      summary: Update all Task
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                taskId: 2
+                task_name: Test Task 2 Updated
+                task_description: Updating tho is a test task for user 2 in which i updated.
+                due_date: '2024-10-20T23:02:00.000Z'
+                assign_to_id: 2
+                status: open
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/user/:
+    get:
+      tags:
+        - User
+      summary: Get Users
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/user/activate/{userId}:
+    patch:
+      tags:
+        - User
+      summary: Activate User
+      requestBody:
+        content: {}
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '2'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/user/role:
+    patch:
+      tags:
+        - User
+      summary: Update User role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                role: admin
+                userId: 2
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/user/deactivate/{userId}:
+    patch:
+      tags:
+        - User
+      summary: Deactivate User
+      requestBody:
+        content: {}
+      parameters:
+        - name: userId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '2'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/members/tenants:
+    get:
+      tags:
+        - Memebrs
+      summary: Get All tenants
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/members/landlords:
+    get:
+      tags:
+        - Memebrs
+      summary: Get All Landlords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
