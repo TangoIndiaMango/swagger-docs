@@ -38,9 +38,9 @@ paths:
             schema:
               type: object
               example:
-                name: Asher Barnie
-                email: barnermine@asher.com
-                password: secretPass
+                name: Aliyu Barnie
+                email: aliyutimileyin2340@gmail.com
+                password: secret
                 role: manager
       security:
         - bearerAuth: []
@@ -60,8 +60,26 @@ paths:
             schema:
               type: object
               example:
-                email: famin@asher.com
-                password: secretPass
+                email: aliyutimileyin2340@gmail.com
+                password: secret
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/auth/verify:
+    post:
+      tags:
+        - Auth
+      summary: Verify Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: aliyutimileyin2340@gmail.com
+                otp: '409755'
       responses:
         '200':
           description: Successful response
