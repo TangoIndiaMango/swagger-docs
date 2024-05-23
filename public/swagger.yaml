@@ -24,10 +24,830 @@ security:
   - bearerAuth: []
 tags:
   - name: Auth
+    description: >-
+      This section details the process by which users gain authorization to
+      access API resources within the asher support system. It encompasses the
+      essential steps of user registration, login with OTP verification, and JWT
+      token issuance.
+
+
+      **1\. User Registration**
+
+
+      - **Endpoint:** `POST /api/auth/register`
+          
+      - **Request Body:**
+          
+          - `name` (string): User's chosen username or identifier.
+              
+          - `password` (string): User's password for authentication.
+              
+          - `email` (string): User's email address for OTP verification and communication.
+              
+          - `role`: Role can either be admin | manager
+              
+      - **Response:**
+          
+          - Upon successful registration, the API returns a 201 Created status code along with a confirmation message or a success object containing user details.
+              
+          - Note: Only Admin can register a user
+              
+
+      **2\. User Login with OTP Verification**
+
+
+      - **Endpoint:** `POST /api/auth/login`
+          
+      - **Request Body:**
+          
+          - `email` (string): User's registered username or identifier.
+              
+          - `password` (string): User's password for authentication.
+              
+      - **Response:**
+          
+          - If the username and password combination is valid, a 200 OK status code is returned, along with a message indicating the OTP has been sent to the user's email address.
+              
+          - For other errors (e.g., network issues, system errors), a 500 Internal Server Error status code is returned with a generic error message.
+              
+      - **Additional Step: Verifying OTP**
+          
+          - The user receives an OTP (One-Time Password) via email.
+              
+          - The user submits the OTP along with a request to verify it.
+              
+          - **Endpoint:** `POST /api/auth/verify`
+              
+          - **Request Body:**
+              
+              - `otp` (string): The received OTP.
+                  
+              - `email` (string): The user email.
+                  
+          - **Response:**
+              
+              - If the OTP is valid, a 200 OK status code is returned, containing a JSON Web Token (JWT) in the response body. This token is required for subsequent API requests to access protected resources.
+                  
+
+      **3\. JWT Token Usage**
+
+
+      - The received JWT token should be included in the authorization header of
+      subsequent API requests to access protected resources.
+          
+      - The format of the authorization header typically follows:
+      `Authorization: Bearer` .
+          
+      - The API server verifies the validity of the JWT token before granting
+      access to the requested resource.
+          
+      - If the token is invalid or expired, a 401 Unauthorized status code is
+      returned, requiring the user to re-authenticate.
   - name: Task
+    description: >-
+      StartFragment
+
+
+      **Tasks API Documentation**
+
+
+      **1\. Get All Tasks**
+
+
+      **Endpoint:** `GET /api/task`
+
+
+      **Query Parameters:**
+
+
+      - `sortBy`: (Optional) Sorts tasks by due date. Values: `asc` (ascending),
+      `desc` (descending). Default: `asc`.
+          
+      - `filterBy`: (Optional) Filters tasks by status. Values: `inProgress`,
+      `open`, `completed`. You can specify multiple statuses by comma-separation
+      (e.g., `filterBy=inProgress,open`). Default: Returns all tasks.
+          
+
+      **Response:**
+
+
+      - Status Code: 200 OK
+          
+      - Body: An array of JSON objects representing all tasks, with the
+      following properties for each task:
+          
+          - `task_id`: (integer) Unique identifier for the task.
+              
+          - `task_name`: (string) Name of the task.
+              
+          - `task_description`: (string) Description of the task.
+              
+          - `due_date`: (string) Date and time the task is due in ISO 8601 format (e.g., `2024-10-25T00:00:00.000Z`).
+              
+          - `assign_to_id`: (integer) ID of the user assigned to the task (optional).
+              
+          - `status`: (string) Current status of the task (e.g., `inProgress`, `open`, `completed`).
+              
+
+      **Example Response:**
+
+
+      JSON
+
+
+      ```
+
+      [
+        {
+          "task_id": 1,
+          "task_name": "Test Task 1",
+          "task_description": "This is a test task for user 1.",
+          "due_date": "2024-10-26T00:00:00.000Z",
+          "start_date": "2024-05-20T15:07:11.092Z",
+          "assign_to_id": 1,
+          "status": "inProgress"
+        },
+        {
+          "task_id": 2,
+          "task_name": "Test Task 2 Updated",
+          "task_description": "Updating this is a test task for user 2 in which I updated.",
+          "due_date": "2024-10-20T23:02:00.000Z",
+          "start_date": "2024-05-20T15:07:11.092Z",
+          "assign_to_id": 2,
+          "status": "open"
+        },
+      ]
+
+       ```
+
+      **2\. Get Single Task**
+
+
+      **Endpoint:** `GET /api/tasks/:taskId`
+
+
+      **Path Parameter:**
+
+
+      - `taskId`: (integer) Unique identifier for the task.
+          
+
+      **Response:**
+
+
+      - Status Code: 200 OK
+          
+      - Body: A single JSON object representing the task with the same
+      properties as described in the `Get All Tasks` response.
+          
+
+      **3\. Create Task**
+
+
+      **Endpoint:** `POST /api/task/`
+
+
+      **Request Body (JSON):**
+
+
+      JSON
+
+
+      ```
+
+      {
+        "task_name": "string", (required)
+        "task_description": "string" (optional),
+        "start_date": "2024-05-20T15:07:11.092Z",
+        "due_date": "string" (optional) in ISO 8601 format (e.g., "2024-10-25T00:00:00.000Z"),
+        "assign_to_id": "integer" (optional),
+        "status": "string" (optional), (e.g., "inProgress", "open", "completed")
+      }
+
+       ```
+
+      **Response:**
+
+
+      - Status Code: 201 Created
+          
+      - Body: A JSON object representing the newly created task, including the
+      generated `task_id` in addition to the properties provided in the request
+      body.
+          
+
+      **4\. Update Task Status**
+
+
+      **Endpoint:** `PATCH /tasks/:taskId/status`
+
+
+      **Path Parameter:**
+
+
+      - `taskId`: (integer) Unique identifier for the task.
+          
+
+      **Request Body (JSON):**
+
+
+      JSON
+
+
+      ```
+
+      {
+        "status": "string" (required), (e.g., "inProgress", "open", "completed")
+      }
+
+       ```
+
+      **Response:**
+
+
+      - Status Code: 200 OK
   - name: User
+    description: >-
+      ## Users
+
+
+      This section outlines the endpoints and functionalities available for
+      managing users within your API.
+
+
+      ### GET /api/users
+
+
+      **Description:** Retrieves a list of users.
+
+
+      **Response:**
+
+
+      - **Status Code:** 200 OK
+          
+      - **Body:** An object containing the following properties:
+          
+          - `users`: (array) An array of user objects, each containing the following properties:
+              
+              - `id` (integer): Unique identifier for the user.
+                  
+              - `email` (string): User's email address.
+                  
+              - `role` (string): User's role (e.g., `admin`, `manager`, `user`).
+                  
+              - `isActive` (boolean): Indicates if the user is active or not.
+                  
+          - `totalUsers` (integer): Total number of users in the system.
+              
+
+      **Example Usage:**
+
+
+      ```
+
+      GET /api/users
+
+      {
+          "users": [
+              {
+                  "id": 1,
+                  "email": "famin@asher.com",
+                  "role": "admin",
+                  "isActive": true
+              },
+              {
+                  "id": 2,
+                  "email": "barnermine@asher.com",
+                  "role": "admin",
+                  "isActive": true
+              },
+          ],
+          "totalUsers": 3
+      }
+
+       ```
+
+      This request retrieves information about all users in the system.
+
+
+      ### PATCH /api/users/activate/:userId
+
+
+      **Description:** Activates deactivated user.
+
+
+      **Path Parameters:**
+
+
+      - `userId` (required, integer): Unique identifier of the user to
+      deactivate.
+          
+
+      **Authorization:** This endpoint might require authorization with
+      appropriate permissions (e.g., admin access) to perform user deactivation.
+      Refer to your API's authentication documentation for details.
+
+
+      **Response:**
+
+
+      - **Status Code:**
+          
+          - 200 OK: If the user is successfully deactivated.
+              
+          - 401 Unauthorized: If the user is not authorized to perform this action.
+              
+          - 404 Not Found: If no user with the provided ID exists.
+              
+          - 400 Bad Request: If the request is invalid (e.g., incorrect user ID format).
+              
+
+      **Example Usage:**
+
+
+      ```
+
+      PATCH /api/users/activate/1
+
+       ```
+
+      This request activates the user with ID 1 (assuming proper authorization
+      is provided).
+
+
+      ### PATCH /api/users/deactivate/:userId
+
+
+      **Description:** Deactivates a specific user.
+
+
+      **Path Parameters:**
+
+
+      - `userId` (required, integer): Unique identifier of the user to
+      deactivate.
+          
+
+      **Authorization:** This endpoint might require authorization with
+      appropriate permissions (e.g., admin access) to perform user deactivation.
+      Refer to your API's authentication documentation for details.
+
+
+      **Response:**
+
+
+      - **Status Code:**
+          
+          - 200 OK: If the user is successfully deactivated.
+              
+          - 401 Unauthorized: If the user is not authorized to perform this action.
+              
+          - 404 Not Found: If no user with the provided ID exists.
+              
+          - 400 Bad Request: If the request is invalid (e.g., incorrect user ID format).
+              
+
+      **Example Usage:**
+
+
+      ```
+
+      PATCH /api/users/deactivate/1
+
+       ```
+
+      This request deactivates the user with ID 1 (assuming proper authorization
+      is provided).
+
+
+      ### PATCH /api/users/role
+
+
+      **Description:** Updates the role of a specific user.
+
+
+      **Authorization:** This endpoint requires authorization with appropriate
+      permissions (e.g., admin access) to modify user roles. Refer to your API's
+      authentication documentation for details.
+
+
+      **Request Body:** (JSON)
+
+
+      ```
+
+      {
+        "role": "admin", // New role for the user
+        "userId": 2        // User ID to update
+      }
+
+       ```
+
+      **Required Properties in Request Body:**
+
+
+      - `role` (string): New role for the user (valid roles based on your
+      system).
+          
+      - `userId` (integer): Unique identifier of the user whose role needs to be
+      updated.
+          
+
+      **Response:**
+
+
+      - **Status Code:**
+          
+          - 200 OK: If the user's role is successfully updated.
+              
+          - 401 Unauthorized: If the user is not authorized to perform this action.
+              
+          - 404 Not Found: If no user with the provided ID exists.
+              
+          - 400 Bad Request: If the request is invalid (e.g., incorrect user ID format, invalid new role).
+              
+
+      **Example Usage:**
+
+
+      ```
+
+      PATCH /api/users/role
+
+      Content-Type: application/json
+
+      {
+        "role": "manager",
+        "userId": 3
+      }
+
+       ```
+
+      This request updates the role of the user with ID 3 to "manager" (assuming
+      proper authorization is provided).
   - name: Memebrs
   - name: Chats
+    description: >-
+      StartFragment
+
+
+      ## Chat
+
+
+      This section details the functionalities available for managing chats
+      within your API.
+
+
+      ### Creating Chats
+
+
+      **Endpoint:** `POST /api/chats/create`
+
+
+      **Request Body:** (JSON)
+
+
+      JSON
+
+
+      ```
+
+      {
+        "senderId": (integer), // Unique identifier of the sender
+        "receiverId": (integer), // Unique identifier of the receiver
+        "message": (string, optional), // Text content of the message (for text chats)
+        "files": (optional, array of strings) // Array of file references (for file chats)
+      }
+
+       ```
+
+      **Required Properties:**
+
+
+      - `senderId`: ID of the user sending the message.
+          
+      - `receiverId`: ID of the user receiving the message.
+          
+
+      **Optional Properties:**
+
+
+      - `message`: Text content of the message (for text chats).
+          
+      - `files`: An array of file references (for file chats). File references
+      could be IDs, paths, or any identifier your system uses to locate uploaded
+      files.
+          
+
+      **File Types:**
+
+
+      The API should support various file types, including images, audio, and
+      potentially other formats according to your system's needs.
+
+
+      **Response:**
+
+
+      - **Status Code:**
+          
+          - 201 Created: If the chat message is successfully created.
+              
+          - 400 Bad Request: If the request body is invalid or missing required fields.
+              
+      - **Body:** An object containing details of the created chat message,
+      which might include:
+          
+          - `id` (string): Unique identifier for the chat message.
+              
+          - `senderId` (integer): ID of the sender.
+              
+          - `receiverId` (integer): ID of the receiver.
+              
+          - `type` (string): Type of the message (`text` or `file`).
+              
+          - `content` (string, optional): Text content of the message (for text chats).
+              
+          - `fileUrls` (array of strings, optional): Array of URLs where uploaded files can be accessed (for file chats).
+              
+          - `fileTypes` (array of strings, optional): Array of MIME types for the uploaded files (for file chats).
+              
+          - `timestamp` (object, optional): Timestamp of when the message was created (format might vary depending on your implementation).
+              
+
+      **Example Usage (Text Chat):**
+
+
+      ```
+
+      POST /api/chats/create
+
+      Content-Type: application/json
+
+      {
+        "senderId": 1,
+        "receiverId": 2,
+        "message": "Hello!"
+      }
+
+       ```
+
+      **Example Usage (File Chat):**
+
+
+      ```
+
+      POST /api/chats/create
+
+      Content-Type: multipart/form-data
+
+      {
+        "senderId": 1,
+        "receiverId": 2,
+        "files": "image.png"
+      }
+
+       ```
+
+      ### Getting Chats
+
+
+      **Endpoint:** `GET /api/chats/`
+
+
+      **Query Parameters:**
+
+
+      - `senderId` (integer): Filter by sender ID.
+          
+      - `receiverId` (integer): Filter by receiver ID.
+          
+
+      **Response:**
+
+
+      - **Status Code:**
+          
+          - 200 OK: If chats are successfully retrieved.
+              
+          - 400 Bad Request: If the request parameters are invalid.
+              
+      - **Body:** An object containing:
+          
+          - `message`: Success message (e.g., "Chats fetched successfully").
+              
+          - `chats` (array of objects): Array of chat objects, each containing the same properties as in the create chat response (see above).
+              
+
+      **Example Usage:**
+
+
+      ```
+
+      GET /api/chats/?senderId=1&receiverId=2
+
+      "message": "Chats fetched successfully",
+
+      {
+          "message": "Chats fetched successfully",
+          "data": [
+              {
+                  "id": "k9Slfz9L9uFBKpaOuiq0",
+                  "type": "text",
+                  "timestamp": {
+                      "seconds": 1716412485,
+                      "nanoseconds": 374000000
+                  },
+                  "content": "Hello",
+                  "senderId": 1,
+                  "receiverId": 2
+              },
+              {
+                  "id": "eUFdcO9bSlbyCcLAzZyz",
+                  "receiverId": 1,
+                  "timestamp": {
+                      "seconds": 1716412523,
+                      "nanoseconds": 623000000
+                  },
+                  "type": "text",
+                  "content": "Omo my guy I dey long time i no hear from you",
+                  "senderId": 2
+              },
+              {
+                  "id": "RFJ037zEasOUTimAGbJI",
+                  "type": "text",
+                  "senderId": 1,
+                  "receiverId": 2,
+                  "content": "Yo you no lie, me self just dey how your side?",
+                  "timestamp": {
+                      "seconds": 1716412569,
+                      "nanoseconds": 722000000
+                  }
+              },
+              {
+                  "id": "XJTGV3087UBpwQg61jfW",
+                  "timestamp": {
+                      "seconds": 1716412599,
+                      "nanoseconds": 83000000
+                  },
+                  "type": "text",
+                  "senderId": 2,
+                  "receiverId": 1,
+                  "content": "Mehn i am good thank God i just have a support issue"
+              },
+              {
+                  "id": "e9RxbXYuGxIO0wdUDCiz",
+                  "type": "text",
+                  "content": "Support issue with Asher ",
+                  "receiverId": 2,
+                  "timestamp": {
+                      "seconds": 1716412622,
+                      "nanoseconds": 146000000
+                  },
+                  "senderId": 1
+              },
+              {
+                  "id": "ORj50Zg5Hrgi2ezqkvjg",
+                  "receiverId": 2,
+                  "content": "Asher team? DO you need a rep ",
+                  "timestamp": {
+                      "seconds": 1716412635,
+                      "nanoseconds": 788000000
+                  },
+                  "senderId": 1,
+                  "type": "text"
+              },
+              {
+                  "id": "tcmwxrmlBpm0lkYvp3HX",
+                  "senderId": 2,
+                  "receiverId": 1,
+                  "content": "Yes abeg i can really use a rep help",
+                  "type": "text",
+                  "timestamp": {
+                      "seconds": 1716412656,
+                      "nanoseconds": 405000000
+                  }
+              },
+              {
+                  "id": "14fOvxuMCLowYHioLeIh",
+                  "type": "text",
+                  "content": "Yes abeg i can really use a rep help",
+                  "senderId": 2,
+                  "receiverId": 1,
+                  "timestamp": {
+                      "seconds": 1716444297,
+                      "nanoseconds": 309000000
+                  }
+              },
+              {
+                  "id": "J0p5EeNHzQ9rJk7cZurj",
+                  "senderId": "1",
+                  "fileTypes": [
+                      "image/png"
+                  ],
+                  "timestamp": {
+                      "seconds": 1716446711,
+                      "nanoseconds": 172000000
+                  },
+                  "type": "file",
+                  "receiverId": "2",
+                  "fileUrls": [
+                      "https://firebasestorage.googleapis.com/v0/b/asher-support-424117.appspot.com/o/chat-files/1_2/06329842-468c-47dc-bdee-a906de843098.png?alt=media&token=d0155cec-5dfb-4adc-b17f-23d6aa61ded9"
+                  ]
+              },
+              {
+                  "id": "VrNkEEt9ltdi6AYfBbod",
+                  "fileUrls": [
+                      "https://firebasestorage.googleapis.com/v0/b/asher-support-424117.appspot.com/o/chat-files/1_2/5c85b64c-4730-4e53-ac9e-3a93e774c6a7.jpg?alt=media&token=1ebf1aa0-fd05-4e7d-8640-98fb7f65c678",
+                      "https://firebasestorage.googleapis.com/v0/b/asher-support-424117.appspot.com/o/chat-files/1_2/40e7a15d-5709-4e7c-bffe-9e67e1ac8529.png?alt=media&token=a62818e0-2b93-4cd6-9616-34189a9b8246"
+                  ],
+                  "timestamp": {
+                      "seconds": 1716448988,
+                      "nanoseconds": 898000000
+                  },
+                  "fileTypes": [
+                      "image/jpeg",
+                      "image/png"
+                  ],
+                  "type": "file",
+                  "receiverId": "2",
+                  "senderId": "1"
+              },
+              {
+                  "id": "zDYQGvQldMIKHKRNDQmb",
+                  "fileTypes": [
+                      "audio/mpeg"
+                  ],
+                  "senderId": "1",
+                  "fileUrls": [
+                      "https://firebasestorage.googleapis.com/v0/b/asher-support-424117.appspot.com/o/chat-files/1_2/1cb680d9-7953-4c33-b651-04552bf6a0aa.mp3?alt=media&token=a5eae7df-1642-40e3-ab6d-83509b7fee5a"
+                  ],
+                  "timestamp": {
+                      "seconds": 1716461554,
+                      "nanoseconds": 427000000
+                  },
+                  "type": "file",
+                  "receiverId": "2"
+              },
+              {
+                  "id": "UjcsyukM6k49pYeOP1wa",
+                  "senderId": 2,
+                  "timestamp": {
+                      "seconds": 1716462548,
+                      "nanoseconds": 584000000
+                  },
+                  "content": "Thank you everything don make sense now",
+                  "type": "text",
+                  "receiverId": 1
+              },
+              {
+                  "id": "rlxareR2z1VZ3z1lppf7",
+                  "receiverId": 2,
+                  "content": "You was able to chat with them right?",
+                  "senderId": 1,
+                  "type": "text",
+                  "timestamp": {
+                      "seconds": 1716462615,
+                      "nanoseconds": 888000000
+                  }
+              },
+              {
+                  "id": "7ITKeE3hI42VLrdCSB1m",
+                  "timestamp": {
+                      "seconds": 1716462641,
+                      "nanoseconds": 15000000
+                  },
+                  "receiverId": 2,
+                  "type": "text",
+                  "content": "You send them image of the house? Make i feel the house",
+                  "senderId": 1
+              },
+              {
+                  "id": "8IgzTJnI3xgI8Y6vveDK",
+                  "timestamp": {
+                      "seconds": 1716462752,
+                      "nanoseconds": 800000000
+                  },
+                  "senderId": "2",
+                  "fileUrls": [
+                      "https://firebasestorage.googleapis.com/v0/b/asher-support-424117.appspot.com/o/chat-files/2_1/5b3ae461-c484-4898-88d9-adced89a0b76.png?alt=media&token=fa3558eb-71aa-44f4-9f26-70b803135acc",
+                      "https://firebasestorage.googleapis.com/v0/b/asher-support-424117.appspot.com/o/chat-files/2_1/bd88d2eb-e882-4e16-a25d-afeb54e0b3a0.png?alt=media&token=328ad280-38ee-4ccb-9b2d-480257469485"
+                  ],
+                  "receiverId": "1",
+                  "content": "Yes i be send them these images, but it's a car",
+                  "fileTypes": [
+                      "image/png",
+                      "image/png"
+                  ],
+                  "type": "file"
+              }
+          ]
+      }
+
+       ```
+
+      This request retrieves all chats between users with IDs 1 and 2.
   - name: Ticket Activity
 paths:
   /api/auth/register:
@@ -82,7 +902,7 @@ paths:
               type: object
               example:
                 email: aliyutimileyin2340@gmail.com
-                otp: '466781'
+                otp: '240421'
       responses:
         '200':
           description: Successful response
@@ -126,15 +946,13 @@ paths:
       tags:
         - Task
       summary: Get Single Task
-      security:
-        - bearerAuth: []
       parameters:
         - name: taskId
           in: path
           schema:
             type: integer
           required: true
-          example: '1'
+          example: '2'
       responses:
         '200':
           description: Successful response
