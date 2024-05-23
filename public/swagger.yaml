@@ -14,6 +14,7 @@ info:
   version: 1.0.0
 servers:
   - url: http://{{host}}
+  - url: https://firebasestorage.googleapis.com
 components:
   securitySchemes:
     bearerAuth:
@@ -26,6 +27,8 @@ tags:
   - name: Task
   - name: User
   - name: Memebrs
+  - name: Chats
+  - name: Ticket Activity
 paths:
   /api/auth/register:
     post:
@@ -79,7 +82,17 @@ paths:
               type: object
               example:
                 email: aliyutimileyin2340@gmail.com
-                otp: '409755'
+                otp: '466781'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/auth/logout:
+    get:
+      tags:
+        - Auth
+      summary: Logout
       responses:
         '200':
           description: Successful response
@@ -267,6 +280,224 @@ paths:
       tags:
         - Memebrs
       summary: Get All Landlords
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/chats/create:
+  post:
+    tags:
+      - Chats
+    summary: Create Chat Text
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              senderId:
+                type: integer
+                example: '2'
+              receiverId:
+                type: integer
+                example: '1'
+              message:
+                type: string
+                example: Hello
+    responses:
+      '200':
+        description: Successful response
+        content:
+          application/json: {}
+  /api/chats/create:
+    post:
+      tags:
+        - Chats
+      summary: Create Chat Adding FIles
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                senderId:
+                  type: integer
+                  example: '2'
+                receiverId:
+                  type: integer
+                  example: '1'
+                files:
+                  type: string
+                  format: binary
+                message:
+                  type: string
+                  example: Yes i be send them these images, but it's a car
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: multipart/form-data
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/chats/create:
+    post:
+      tags:
+        - Chats
+      summary: Create Chat Audio FIles
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                senderId:
+                  type: integer
+                  example: '1'
+                receiverId:
+                  type: integer
+                  example: '2'
+                files:
+                  type: string
+                  format: binary
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: multipart/form-data
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/chats/:
+    get:
+      tags:
+        - Chats
+      summary: Get Chat
+      parameters:
+        - name: senderId
+          in: query
+          schema:
+            type: integer
+          example: '1'
+        - name: receiverId
+          in: query
+          schema:
+            type: integer
+          example: '2'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v0/b/asher-support-424117.appspot.com/o/chat-files/1_2/40e7a15d-5709-4e7c-bffe-9e67e1ac8529.png:
+    get:
+      tags:
+        - Chats
+      summary: Returned file
+      description: testing returned file in chat
+      parameters:
+        - name: alt
+          in: query
+          schema:
+            type: string
+          example: media
+        - name: token
+          in: query
+          schema:
+            type: string
+          example: a62818e0-2b93-4cd6-9616-34189a9b8246
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/tickets/all:
+    get:
+      tags:
+        - Ticket Activity
+      summary: Get All tickets
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/tickets/{ticketId}:
+    get:
+      tags:
+        - Ticket Activity
+      summary: Get Single Ticket
+      parameters:
+        - name: ticketId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/tickets/ticket-activity/{ticketId}:
+    get:
+      tags:
+        - Ticket Activity
+      summary: Get All ticket Activity
+      parameters:
+        - name: ticketId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/tickets/ticket-activity/create:
+    post:
+      tags:
+        - Ticket Activity
+      summary: Create Ticket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                ticketId: 1
+                activity: Picked up the issue
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/tickets/ticket-activity/update/{ticketId}:
+    patch:
+      tags:
+        - Ticket Activity
+      summary: Update Ticket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                activity: Requested for doc files from tenant
+      parameters:
+        - name: ticketId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '1'
       responses:
         '200':
           description: Successful response
