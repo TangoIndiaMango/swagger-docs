@@ -15,6 +15,7 @@ info:
 servers:
   - url: http://{{host}}
   - url: https://firebasestorage.googleapis.com
+  - url: http://localhost:8000
 components:
   securitySchemes:
     bearerAuth:
@@ -105,12 +106,6 @@ tags:
       returned, requiring the user to re-authenticate.
   - name: Task
     description: >-
-      StartFragment
-
-
-      **Tasks API Documentation**
-
-
       **1\. Get All Tasks**
 
 
@@ -239,7 +234,7 @@ tags:
       **4\. Update Task Status**
 
 
-      **Endpoint:** `PATCH /tasks/:taskId/status`
+      **Endpoint:** `PATCH /api/tasks`
 
 
       **Path Parameter:**
@@ -257,7 +252,8 @@ tags:
       ```
 
       {
-        "status": "string" (required), (e.g., "inProgress", "open", "completed")
+        "taskId": 1,
+        "status": "string" (required), (e.g., "inProgress", "open", "completed", "deleted")
       }
 
        ```
@@ -268,9 +264,6 @@ tags:
       - Status Code: 200 OK
   - name: User
     description: >-
-      ## Users
-
-
       This section outlines the endpoints and functionalities available for
       managing users within your API.
 
@@ -489,12 +482,6 @@ tags:
   - name: Memebrs
   - name: Chats
     description: >-
-      StartFragment
-
-
-      ## Chat
-
-
       This section details the functionalities available for managing chats
       within your API.
 
@@ -849,6 +836,176 @@ tags:
 
       This request retrieves all chats between users with IDs 1 and 2.
   - name: Ticket Activity
+  - name: AsherMain
+  - name: AsherMain > Tickets
+  - name: Notification
+    description: >-
+      **Get All Notifications**
+
+
+      **Endpoint:** `GET /api/notifications/all`
+
+
+      **Description:**  
+
+      Retrieves a list of all notifications in the system.
+
+
+      **Response:**
+
+
+      - **Status Code:** 200 OK
+          
+      - **Response Body:** An array of notification objects.
+          
+
+      Example Response:
+
+
+      ```
+
+      jsonCopy code[
+        {
+          "id": 1,
+          "title": "New ticket",
+          "event_id": "T-123",
+          "detail": "A new ticket has been created",
+          "read": false,
+          "created_at": "2023-05-28T14:30:00.000Z",
+          "updated_at": null
+        },
+        {
+          "id": 2,
+          "title": "Ticket Updated",
+          "event_id": "T-456",
+          "detail": "Ticket title updated",
+          "read": true,
+          "created_at": "2023-05-29T09:15:00.000Z",
+          "updated_at": "2023-05-29T10:20:00.000Z"
+        }
+      ]
+
+       ```
+
+      **Get Notification by Event ID**
+
+
+      **Endpoint:** `GET /api/notifications/:eventId`
+
+
+      **Description:**  
+
+      Retrieves the details of a specific notification based on the provided
+      `eventId`. For now our eventId is coming from the ticketsidvalue.
+
+
+      **Parameters:**
+
+
+      - `eventId` (string): The unique identifier of the event associated with
+      the notification.
+          
+
+      **Response:**
+
+
+      - **Status Code:** 200 OK
+          
+      - **Response Body:** A notification object.
+          
+
+      Example Response:
+
+
+      ```
+
+      {
+        "id": 2,
+        "title": "Ticket Updated",
+        "event_id": "T-456",
+        "detail": "Ticket title updated",
+        "read": true,
+        "created_at": "2023-05-29T09:15:00.000Z",
+        "updated_at": "2023-05-29T10:20:00.000Z"
+      }
+
+       ```
+
+      **Mark Notification as Read**
+
+
+      **Endpoint:** `PATCH /api/notifications/:id/read`
+
+
+      **Description:**  
+
+      Marks a specific notification as read by updating its `read` field to
+      `true`.
+
+
+      **Parameters:**
+
+
+      - `id` (integer): The unique identifier of the notification to be marked
+      as read.
+          
+
+      **Response:**
+
+
+      - **Status Code:** 200 OK
+          
+      - **Response Body:** The updated notification object.
+          
+
+      Example Response:
+
+
+      ```
+
+      {
+        "id": 1,
+        "title": "New ticket",
+        "event_id": "T-123",
+        "detail": "A new ticket has been created",
+        "read": true,
+        "created_at": "2023-05-28T14:30:00.000Z",
+        "updated_at": "2023-05-29T11:45:00.000Z"
+      }
+
+       ```
+
+      **Mark All Notifications as Read**
+
+
+      **Endpoint:** `PATCH /api/notifications/read-all`
+
+
+      **Description:**  
+
+      Marks all notifications in the system as read by updating their `read`
+      field to `true`.
+
+
+      **Response:**
+
+
+      - **Status Code:** 200 OK
+          
+      - **Response Body:** An object containing the count of updated
+      notifications.
+          
+
+      Example Response:
+
+
+      ```
+
+      {
+        "count": 3
+      }
+
+       ```
 paths:
   /api/auth/register:
     post:
@@ -902,7 +1059,7 @@ paths:
               type: object
               example:
                 email: aliyutimileyin2340@gmail.com
-                otp: '240421'
+                otp: '111111'
       responses:
         '200':
           description: Successful response
@@ -985,8 +1142,9 @@ paths:
             schema:
               type: object
               example:
-                task_name: Test  4
-                task_description: This is ask for user 43.
+                task_name: Test  6
+                task_description: This is ask for user 63.
+                start_date: '2024-05-27'
                 assign_to_id: 1
                 status: inProgress
       security:
@@ -1116,10 +1274,10 @@ paths:
               properties:
                 senderId:
                   type: integer
-                  example: '1'
+                  example: '3'
                 receiverId:
                   type: integer
-                  example: '2'
+                  example: '1'
                 files:
                   type: string
                   format: binary
@@ -1144,12 +1302,12 @@ paths:
           in: query
           schema:
             type: integer
-          example: '1'
+          example: '3'
         - name: receiverId
           in: query
           schema:
             type: integer
-          example: '2'
+          example: '1'
       responses:
         '200':
           description: Successful response
@@ -1196,8 +1354,9 @@ paths:
         - name: ticketId
           in: path
           schema:
-            type: string
+            type: integer
           required: true
+          example: '22'
       responses:
         '200':
           description: Successful response
@@ -1231,7 +1390,7 @@ paths:
             schema:
               type: object
               example:
-                ticketId: 1
+                ticketId: 22
                 activity: Picked up the issue
       responses:
         '200':
@@ -1257,6 +1416,166 @@ paths:
             type: integer
           required: true
           example: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /checkuser:
+    post:
+      tags:
+        - AsherMain > Tickets
+      summary: Check User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: person6@example.com
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /ticket:
+    post:
+      tags:
+        - AsherMain > Tickets
+      summary: Create tickets
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: string
+                  format: binary
+                authid:
+                  type: string
+                  example: $2b$10$CeQ1.Oebq5ybar7psBFPI.SCx7RGRDvPX.Jy.bb1n368At8Crf4BW
+                userid:
+                  type: integer
+                  example: '1'
+                title:
+                  type: string
+                  example: New car has helped us
+                description:
+                  type: string
+                  example: >-
+                    The property at house 309 room 123 behind the newly occupied
+                    tenant has always had new car hit the wall which hasnt been
+                    fixed
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - AsherMain > Tickets
+      summary: Edit Ticket
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /ticket/{ticketId}:
+    post:
+      tags:
+        - AsherMain > Tickets
+      summary: Delete Ticket
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: string
+                  format: binary
+                authid:
+                  type: string
+                  example: $2b$10$CeQ1.Oebq5ybar7psBFPI.SCx7RGRDvPX.Jy.bb1n368At8Crf4BW
+                userid:
+                  type: integer
+                  example: '1'
+                title:
+                  type: string
+                  example: The network has been fluntuating
+                description:
+                  type: string
+                  example: >-
+                    The property at house 309 room 123 behind the newly occupied
+                    tenant has always had network issues which hasnt been fixed
+      parameters:
+        - name: ticketId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '20'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/notification/all:
+    get:
+      tags:
+        - Notification
+      summary: get All notification
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/notification/{id}/read:
+    patch:
+      tags:
+        - Notification
+      summary: mark notification as read
+      requestBody:
+        content: {}
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '2'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/notification/read-all:
+    patch:
+      tags:
+        - Notification
+      summary: mark all notification as read
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/notification/{eventId}:
+    get:
+      tags:
+        - Notification
+      summary: get notification detail
+      parameters:
+        - name: eventId
+          in: path
+          schema:
+            type: string
+          required: true
+          example: T-22
       responses:
         '200':
           description: Successful response
