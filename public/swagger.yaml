@@ -1006,6 +1006,154 @@ tags:
       }
 
        ```
+  - name: Dashboard
+    description: >-
+      StartFragment
+
+
+      Sure, here's the documentation for the `getDashboard` API endpoint and the
+      expected response:
+
+
+      **Endpoint**: `/api/dashboard`
+
+
+      **Method**: `GET`
+
+
+      **Description**: This endpoint retrieves the dashboard data, which
+      includes information about users (landlords, tenants, and vendors), task
+      statuses, assigned tasks, recent tasks, and recent tickets.
+
+
+      - `users`: An object containing the counts of landlords, tenants, and
+      vendors.  
+          
+          - `landlords`: The number of landlords.
+              
+          - `tenants`: The number of tenants.
+              
+          - `vendors`: The number of vendors.
+              
+      - `status`: An object containing the counts of tasks for each status,
+      along with the total count.  
+          
+          - `inProgress`: The number of tasks in progress.
+              
+          - `open`: The number of open tasks.
+              
+          - `completed`: The number of completed tasks.
+              
+          - `deleted`: The number of deleted tasks.
+              
+      - `assignedTasks`: An object containing the counts of assigned and
+      unassigned tasks.  
+          
+          - `assigned`: The number of assigned tasks.
+              
+          - `unassigned`: The number of unassigned tasks.
+              
+      - `tasks`: An array of recent tasks, with each task having the following
+      properties:  
+          
+          - `id`: The unique identifier of the task.
+              
+          - `task_name`: The name of the task.
+              
+          - `task_description`: The description of the task.
+              
+          - `start_date`: The start date of the task (ISO format).
+              
+          - `due_date`: The due date of the task (ISO format), or `null` if not set.
+              
+          - `assign_to_id`: The ID of the user assigned to the task, or `null` if not assigned.
+              
+          - `status`: The status of the task (e.g., "inProgress", "open", "completed", "deleted").
+              
+      - `tickets`: An array of recent tickets, with each ticket having the
+      following properties:  
+          
+          - `ticketid`: The unique identifier of the ticket.
+              
+          - `title`: The title of the ticket.
+              
+          - `description`: The description of the ticket.
+              
+          - `attachment`: An array of objects containing the URLs of attached images.  
+              
+              - `imageurl`: The URL of the attached image.
+                  
+          - `userid`: The ID of the user who created the ticket.
+              
+          - `status`: The status of the ticket (e.g., 1 for open, 2 for in progress, 3 for completed).
+              
+          - `datecreated`: The date and time when the ticket was created (ISO format).
+              
+          - `datecompleted`: The date and time when the ticket was completed (ISO format), or `null` if not completed.
+              
+          - `ticketidvalue`: The formatted ticket ID value (e.g., "T-22").
+              
+
+      **Example Response**:
+
+
+      ```
+
+      {
+        "users": {
+          "landlords": 2,
+          "tenants": 19,
+          "vendors": 0
+        },
+        "status": {
+          "inProgress": 6,
+          "open": 1,
+          "completed": 1,
+          "deleted": 1,
+          "total": 9
+        },
+        "assignedTasks": {
+          "assigned": 6,
+          "unassigned": 0
+        },
+        "tasks": [
+          {
+            "id": 9,
+            "task_name": "Task 7",
+            "task_description": "Test task 7",
+            "start_date": "2024-05-29T00:00:00.000Z",
+            "due_date": "2024-06-01T00:00:00.000Z",
+            "assign_to_id": 1,
+            "status": "inProgress"
+          },
+          // ...
+        ],
+        "tickets": [
+          {
+            "ticketid": "22",
+            "title": "New car has helped us",
+            "description": "The property at house 309 room 123 behind the newly occupied tenant has always had new car hit the wall which hasnt been fixed",
+            "attachment": [
+              {
+                "imageurl": "https://res.cloudinary.com/carter827/image/upload/v1716863634/Asher/cw1wej9wmdagzobavo7a.png"
+              },
+              {
+                "imageurl": "https://res.cloudinary.com/carter827/image/upload/v1716863641/Asher/qn5b8uflleyuef4iuckd.png"
+              }
+            ],
+            "userid": "1",
+            "status": 2,
+            "datecreated": "2024-05-28T01:34:02.442Z",
+            "datecompleted": null,
+            "ticketidvalue": "T-22"
+          },
+          // ...
+        ]
+      }
+
+
+
+       ```
 paths:
   /api/auth/register:
     post:
@@ -1581,3 +1729,184 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /api/dashboard/:
+    get:
+      tags:
+        - Dashboard
+      summary: Get Dashboard data
+      responses:
+        '200':
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+                example: '*'
+            Content-Security-Policy:
+              schema:
+                type: string
+                example: >-
+                  default-src 'self';base-uri 'self';font-src 'self' https:
+                  data:;form-action 'self';frame-ancestors 'self';img-src 'self'
+                  data:;object-src 'none';script-src 'self';script-src-attr
+                  'none';style-src 'self' https:
+                  'unsafe-inline';upgrade-insecure-requests
+            Cross-Origin-Opener-Policy:
+              schema:
+                type: string
+                example: same-origin
+            Cross-Origin-Resource-Policy:
+              schema:
+                type: string
+                example: same-origin
+            Origin-Agent-Cluster:
+              schema:
+                type: string
+                example: '?1'
+            Referrer-Policy:
+              schema:
+                type: string
+                example: no-referrer
+            Strict-Transport-Security:
+              schema:
+                type: string
+                example: max-age=15552000; includeSubDomains
+            X-Content-Type-Options:
+              schema:
+                type: string
+                example: nosniff
+            X-DNS-Prefetch-Control:
+              schema:
+                type: string
+                example: 'off'
+            X-Download-Options:
+              schema:
+                type: string
+                example: noopen
+            X-Frame-Options:
+              schema:
+                type: string
+                example: SAMEORIGIN
+            X-Permitted-Cross-Domain-Policies:
+              schema:
+                type: string
+                example: none
+            X-XSS-Protection:
+              schema:
+                type: integer
+                example: '0'
+            Content-Type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            Content-Length:
+              schema:
+                type: integer
+                example: '2199'
+            ETag:
+              schema:
+                type: string
+                example: W/"897-lyl2LzkWXfC1FO3t1CV6y8k4CWg"
+            Date:
+              schema:
+                type: string
+                example: Wed, 29 May 2024 07:33:15 GMT
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=5
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                users:
+                  landlords: '2'
+                  tenants: '19'
+                  vendors: '0'
+                status:
+                  inProgress: 6
+                  open: 1
+                  completed: 1
+                  deleted: 1
+                assignedTasks:
+                  assigned: 6
+                  unassigned: 0
+                tasks:
+                  - id: 9
+                    task_name: Task 7
+                    task_description: Test task 7
+                    start_date: '2024-05-29T00:00:00.000Z'
+                    due_date: '2024-06-01T00:00:00.000Z'
+                    assign_to_id: 1
+                    status: inProgress
+                  - id: 11
+                    task_name: Test 9
+                    task_description: Test 9 desc
+                    start_date: '2024-05-29T00:00:00.000Z'
+                    due_date: '2024-06-05T00:00:00.000Z'
+                    assign_to_id: 3
+                    status: completed
+                  - id: 10
+                    task_name: Test 8
+                    task_description: Test 8 desc
+                    start_date: '2024-05-28T00:00:00.000Z'
+                    due_date: '2024-05-28T00:00:00.000Z'
+                    assign_to_id: 1
+                    status: open
+                  - id: 7
+                    task_name: Test  4
+                    task_description: This is ask for user 43.
+                    start_date: '2024-05-27T15:25:56.784Z'
+                    due_date: null
+                    assign_to_id: 1
+                    status: inProgress
+                  - id: 8
+                    task_name: Test  6
+                    task_description: This is ask for user 63.
+                    start_date: '2024-05-27T00:00:00.000Z'
+                    due_date: null
+                    assign_to_id: 1
+                    status: inProgress
+                  - id: 6
+                    task_name: Test  4
+                    task_description: This is ask for user 43.
+                    start_date: '2024-05-20T20:55:25.187Z'
+                    due_date: null
+                    assign_to_id: 1
+                    status: inProgress
+                tickets:
+                  - ticketid: '22'
+                    title: New car has helped us
+                    description: >-
+                      The property at house 309 room 123 behind the newly
+                      occupied tenant has always had new car hit the wall which
+                      hasnt been fixed
+                    attachment:
+                      - imageurl: >-
+                          https://res.cloudinary.com/carter827/image/upload/v1716863634/Asher/cw1wej9wmdagzobavo7a.png
+                      - imageurl: >-
+                          https://res.cloudinary.com/carter827/image/upload/v1716863641/Asher/qn5b8uflleyuef4iuckd.png
+                    userid: '1'
+                    status: 2
+                    datecreated: '2024-05-28T01:34:02.442Z'
+                    datecompleted: null
+                    ticketidvalue: T-22
+                  - ticketid: '21'
+                    title: The network has been fluntuating
+                    description: >-
+                      The property at house 309 room 123 behind the newly
+                      occupied tenant has always had network issues which hasnt
+                      been fixed
+                    attachment:
+                      - imageurl: >-
+                          https://res.cloudinary.com/carter827/image/upload/v1716862627/Asher/vulqvua8ugzfggb2wkxl.png
+                    userid: '1'
+                    status: 2
+                    datecreated: '2024-05-28T01:17:07.738Z'
+                    datecompleted: null
+                    ticketidvalue: T-21
