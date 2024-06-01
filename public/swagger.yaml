@@ -1027,7 +1027,7 @@ tags:
 
 
       - `users`: An object containing the counts of landlords, tenants, and
-      vendors.  
+      vendors.
           
           - `landlords`: The number of landlords.
               
@@ -1036,7 +1036,7 @@ tags:
           - `vendors`: The number of vendors.
               
       - `status`: An object containing the counts of tasks for each status,
-      along with the total count.  
+      along with the total count.
           
           - `inProgress`: The number of tasks in progress.
               
@@ -1047,14 +1047,14 @@ tags:
           - `deleted`: The number of deleted tasks.
               
       - `assignedTasks`: An object containing the counts of assigned and
-      unassigned tasks.  
+      unassigned tasks.
           
           - `assigned`: The number of assigned tasks.
               
           - `unassigned`: The number of unassigned tasks.
               
       - `tasks`: An array of recent tasks, with each task having the following
-      properties:  
+      properties:
           
           - `id`: The unique identifier of the task.
               
@@ -1071,7 +1071,7 @@ tags:
           - `status`: The status of the task (e.g., "inProgress", "open", "completed", "deleted").
               
       - `tickets`: An array of recent tickets, with each ticket having the
-      following properties:  
+      following properties:
           
           - `ticketid`: The unique identifier of the ticket.
               
@@ -1079,7 +1079,7 @@ tags:
               
           - `description`: The description of the ticket.
               
-          - `attachment`: An array of objects containing the URLs of attached images.  
+          - `attachment`: An array of objects containing the URLs of attached images.
               
               - `imageurl`: The URL of the attached image.
                   
@@ -1130,30 +1130,33 @@ tags:
         ],
         "tickets": [
           {
-            "ticketid": "22",
-            "title": "New car has helped us",
-            "description": "The property at house 309 room 123 behind the newly occupied tenant has always had new car hit the wall which hasnt been fixed",
-            "attachment": [
-              {
-                "imageurl": "https://res.cloudinary.com/carter827/image/upload/v1716863634/Asher/cw1wej9wmdagzobavo7a.png"
+                  "id": "T-22",
+                  "title": "New car has helped us",
+                  "status": "unassigned                                                                                                                                                                                                                                                     ",
+                  "dateCreated": "2024-05-28T01:34:02.442Z",
+                  "user": {
+                      "email": "cartre@gmail.com",
+                      "name": "Carter",
+                      "profileImage": "https://res.cloudinary.com/carter827/image/upload/v1707581012/Asher/blank-profile-picture-png.png"
+                  }
               },
               {
-                "imageurl": "https://res.cloudinary.com/carter827/image/upload/v1716863641/Asher/qn5b8uflleyuef4iuckd.png"
+                  "id": "T-21",
+                  "title": "The network has been fluntuating",
+                  "status": "unassigned                                                                                                                                                                                                                                                     ",
+                  "dateCreated": "2024-05-28T01:17:07.738Z",
+                  "user": {
+                      "email": "cartre@gmail.com",
+                      "name": "Carter",
+                      "profileImage": "https://res.cloudinary.com/carter827/image/upload/v1707581012/Asher/blank-profile-picture-png.png"
+                  }
               }
-            ],
-            "userid": "1",
-            "status": 2,
-            "datecreated": "2024-05-28T01:34:02.442Z",
-            "datecompleted": null,
-            "ticketidvalue": "T-22"
-          },
           // ...
         ]
       }
 
-
-
        ```
+  - name: Files
 paths:
   /api/auth/register:
     post:
@@ -1188,8 +1191,8 @@ paths:
             schema:
               type: object
               example:
-                email: aliyutimileyin2340@gmail.com
-                password: secret
+                email: famin@asher.com
+                password: secretPass
       responses:
         '200':
           description: Successful response
@@ -1206,7 +1209,7 @@ paths:
             schema:
               type: object
               example:
-                email: aliyutimileyin2340@gmail.com
+                email: famin@asher.com
                 otp: '111111'
       responses:
         '200':
@@ -1339,7 +1342,12 @@ paths:
         - User
       summary: Activate User
       requestBody:
-        content: {}
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                activate: true
       parameters:
         - name: userId
           in: path
@@ -1802,15 +1810,15 @@ paths:
             Content-Length:
               schema:
                 type: integer
-                example: '2199'
+                example: '2289'
             ETag:
               schema:
                 type: string
-                example: W/"897-lyl2LzkWXfC1FO3t1CV6y8k4CWg"
+                example: W/"8f1-J0+ce/tjJ12jxRQSDdW4xCyKPQE"
             Date:
               schema:
                 type: string
-                example: Wed, 29 May 2024 07:33:15 GMT
+                example: Sat, 01 Jun 2024 09:51:27 GMT
             Connection:
               schema:
                 type: string
@@ -1837,13 +1845,6 @@ paths:
                   assigned: 6
                   unassigned: 0
                 tasks:
-                  - id: 9
-                    task_name: Task 7
-                    task_description: Test task 7
-                    start_date: '2024-05-29T00:00:00.000Z'
-                    due_date: '2024-06-01T00:00:00.000Z'
-                    assign_to_id: 1
-                    status: inProgress
                   - id: 11
                     task_name: Test 9
                     task_description: Test 9 desc
@@ -1851,9 +1852,16 @@ paths:
                     due_date: '2024-06-05T00:00:00.000Z'
                     assign_to_id: 3
                     status: completed
+                  - id: 9
+                    task_name: Task 7
+                    task_description: Test task 7
+                    start_date: '2024-05-29T00:00:00.000Z'
+                    due_date: '2024-06-01T00:00:00.000Z'
+                    assign_to_id: 1
+                    status: inProgress
                   - id: 10
                     task_name: Test 8
-                    task_description: Test 8 desc
+                    task_description: Test 9 desc
                     start_date: '2024-05-28T00:00:00.000Z'
                     due_date: '2024-05-28T00:00:00.000Z'
                     assign_to_id: 1
@@ -1880,33 +1888,33 @@ paths:
                     assign_to_id: 1
                     status: inProgress
                 tickets:
-                  - ticketid: '22'
+                  - id: T-22
                     title: New car has helped us
-                    description: >-
-                      The property at house 309 room 123 behind the newly
-                      occupied tenant has always had new car hit the wall which
-                      hasnt been fixed
-                    attachment:
-                      - imageurl: >-
-                          https://res.cloudinary.com/carter827/image/upload/v1716863634/Asher/cw1wej9wmdagzobavo7a.png
-                      - imageurl: >-
-                          https://res.cloudinary.com/carter827/image/upload/v1716863641/Asher/qn5b8uflleyuef4iuckd.png
-                    userid: '1'
-                    status: 2
-                    datecreated: '2024-05-28T01:34:02.442Z'
-                    datecompleted: null
-                    ticketidvalue: T-22
-                  - ticketid: '21'
+                    status: >-
+                      unassigned                                                                                                                                                                                                                                                     
+                    dateCreated: '2024-05-28T01:34:02.442Z'
+                    user:
+                      email: cartre@gmail.com
+                      name: Carter
+                      profileImage: >-
+                        https://res.cloudinary.com/carter827/image/upload/v1707581012/Asher/blank-profile-picture-png.png
+                  - id: T-21
                     title: The network has been fluntuating
-                    description: >-
-                      The property at house 309 room 123 behind the newly
-                      occupied tenant has always had network issues which hasnt
-                      been fixed
-                    attachment:
-                      - imageurl: >-
-                          https://res.cloudinary.com/carter827/image/upload/v1716862627/Asher/vulqvua8ugzfggb2wkxl.png
-                    userid: '1'
-                    status: 2
-                    datecreated: '2024-05-28T01:17:07.738Z'
-                    datecompleted: null
-                    ticketidvalue: T-21
+                    status: >-
+                      unassigned                                                                                                                                                                                                                                                     
+                    dateCreated: '2024-05-28T01:17:07.738Z'
+                    user:
+                      email: cartre@gmail.com
+                      name: Carter
+                      profileImage: >-
+                        https://res.cloudinary.com/carter827/image/upload/v1707581012/Asher/blank-profile-picture-png.png
+  /api/files/:
+    get:
+      tags:
+        - Files
+      summary: Get Files
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
